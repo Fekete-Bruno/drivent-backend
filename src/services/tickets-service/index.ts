@@ -1,6 +1,7 @@
-import { notFoundError } from "@/errors";
-import ticketRepository from "@/repositories/tickets-repository";
-import { Console } from "console";
+import { notFoundError, requestError } from "@/errors";
+import enrollmentRepository from "@/repositories/enrollment-repository";
+import ticketRepository, { CreateTicketParams } from "@/repositories/tickets-repository";
+import httpStatus from "http-status";
 
 async function getTicketsTypes() {
   try {
@@ -31,9 +32,26 @@ async function getTickets() {
   }    
 }
 
+async function createTicket(
+  params: CreateTicketParams,
+  userId: number)
+{
+  if(!params.ticketTypeId) {
+    throw requestError(httpStatus.BAD_REQUEST, "BAD REQUEST");
+  }
+
+  const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
+
+  if(!enrollment) throw notFoundError();
+
+  /* TO DO: INSERT TICKET INTO DATABASE AND RETURN IT TO THE CONTROLLER */
+  return "ok";
+}
+
 const ticketsService = {
   getTicketsTypes,
-  getTickets
+  getTickets,
+  createTicket
 };
 
 export default ticketsService;
