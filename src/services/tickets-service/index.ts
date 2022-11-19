@@ -44,8 +44,16 @@ async function createTicket(
 
   if(!enrollment) throw notFoundError();
 
-  /* TO DO: INSERT TICKET INTO DATABASE AND RETURN IT TO THE CONTROLLER */
-  return "ok";
+  try {
+    const Ticket = await ticketRepository.create({
+      status: "RESERVED",
+      ticketTypeId: params.ticketTypeId,
+      enrollmentId: enrollment.id,
+    });
+    return(Ticket);
+  } catch (error) {
+    throw (notFoundError());
+  }
 }
 
 const ticketsService = {
