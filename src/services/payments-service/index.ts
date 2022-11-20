@@ -1,5 +1,6 @@
 import { notFoundError, requestError, unauthorizedError } from "@/errors";
-import paymentRepository from "@/repositories/payments-repository";
+import { paymentData } from "@/protocols";
+import paymentRepository, { CreatePaymentParams } from "@/repositories/payments-repository";
 import ticketRepository from "@/repositories/tickets-repository";
 import httpStatus from "http-status";
 
@@ -18,8 +19,27 @@ async function getPaymentsByTicketId(ticketId: number, userId: number) {
   return payment;
 }
 
+async function createPayment(
+  params: paymentData,
+  userId: number
+) {
+  if(!params.cardData || !params.ticketId) {
+    throw requestError(httpStatus.BAD_REQUEST, "BAD REQUEST");
+  }
+
+  const ticket = await ticketRepository.findTicketsById(params.ticketId);
+  if(!ticket) {
+    throw notFoundError();
+  }
+    
+  if(ticket.Enrollment.userId!==userId) {
+    throw unauthorizedError();
+  }
+}
+
 const paymentService = {
-  getPaymentsByTicketId
+  getPaymentsByTicketId,
+  createPayment
 };
 
 export default paymentService;
