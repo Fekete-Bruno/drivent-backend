@@ -25,8 +25,8 @@ export async function postPaymentProcess(req: AuthenticatedRequest, res: Respons
   const body = req.body as paymentData;
   const userId = req.userId;
   try {
-    await paymentService.createPayment(body, userId);
-    return res.sendStatus(httpStatus.OK);
+    const result = await paymentService.createPayment(body, userId);
+    return res.status(httpStatus.OK).send(result);
   } catch (error) {
     if(error.name === "UnauthorizedError") {
       return res.status(httpStatus.UNAUTHORIZED).send(error);

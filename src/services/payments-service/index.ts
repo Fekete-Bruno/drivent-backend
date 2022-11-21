@@ -35,6 +35,19 @@ async function createPayment(
   if(ticket.Enrollment.userId!==userId) {
     throw unauthorizedError();
   }
+
+  const ticketType = await ticketRepository.findTicketsTypesbyId(ticket.ticketTypeId);
+  
+  const payment =  await paymentRepository.create({
+    ticketId: ticket.id,
+    value: ticketType.price,
+    cardIssuer: params.cardData.issuer,
+    cardLastDigits: params.cardData.number.toString().slice(-4),
+  });
+
+  await ticketRepository.updateTicket(ticket.id);
+
+  return(payment);
 }
 
 const paymentService = {
