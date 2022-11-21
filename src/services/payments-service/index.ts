@@ -1,6 +1,6 @@
 import { notFoundError, requestError, unauthorizedError } from "@/errors";
 import { paymentData } from "@/protocols";
-import paymentRepository, { CreatePaymentParams } from "@/repositories/payments-repository";
+import paymentRepository from "@/repositories/payments-repository";
 import ticketRepository from "@/repositories/tickets-repository";
 import httpStatus from "http-status";
 
